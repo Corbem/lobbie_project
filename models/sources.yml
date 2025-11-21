@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: ELECTION_DATA
+    schema: BRONZE
+    tables:
+      - name: raw_candidate_info
+      - name: raw_lobbying_expenses
+      - name: raw_fec_contributions
+      - name: raw_election_results
+      - name: raw_campaign_transactions
+      - name: raw_financial_reports
