@@ -1,0 +1,199 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: ELECTION_DATA
+    schema: bronze
+    description: Datos en crudo provenientes de sistemas externos simulando OpenSecrets y FEC
+    loader: manual_csv_ingestion
+
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    freshness:
+      warn_after: {count: 24, period: hour}
+      error_after: {count: 48, period: hour}
+
+    tables:
+
+    - name: bronze_candidate_info
+      description: Información base de los candidatos electorales
+      columns:
+        - name: candidate_id
+          description: Identificador único del candidato
+          data_type: string
+          data_tests:
+            - not_null
+            - unique
+
+        - name: first_name
+          description: Nombre del candidato
+          data_type: string
+          data_tests:
+            - not_null
+
+        - name: last_name
+          description: Apellido del candidato
+          data_type: string
+          data_tests:
+            - not_null
+
+        - name: party
+          description: Partido político
+          data_type: string
+          data_tests:
+            - accepted_values:
+                values: ['Democratic', 'Republican', 'Independent']
+
+        - name: state
+          description: Estado al que pertenece el candidato
+          data_type: string
+          data_tests:
+            - not_null
+
+
+    - name: bronze_lobbying_expenses
+      description: Gastos de lobby reportados por industria
+      columns:
+        - name: lobby_id
+          description: Identificador del lobby
+          data_type: string
+          data_tests:
+            - not_null
+
+        - name: industry
+          description: Industria asociada al lobby
+          data_type: string
+
+        - name: total_amount
+          description: Total total invertido en lobbying
+          data_type: number
+          data_tests:
+            - not_null
+
+        - name: year
+          description: Año fiscal de reporte
+          data_type: integer
+          data_tests:
+            - not_null
+
+
+    - name: bronze_fec_contributions
+      description: Registro crudo de contribuciones electorales
+      columns:
+        - name: contribution_id
+          description: Identificador único de la contribución
+          data_type: string
+          data_tests:
+            - not_null
+            - unique
+
+        - name: donor_name
+          description: Nombre del donante
+          data_type: string
+          data_tests:
+            - not_null
+
+        - name: candidate_id
+          description: Candidato receptor de la donación
+          data_type: string
+          data_tests:
+            - not_null
+
+        - name: amount
+          description: Monto de la donación
+          data_type: number
+          data_tests:
+            - not_null
+
+        - name: contribution_date
+          description: Fecha de la donación
+          data_type: date
+          data_tests:
+            - not_null
+
+
+    - name: bronze_election_results
+      description: Resultados electorales por candidato
+      columns:
+        - name: candidate_id
+          description: Identificador del candidato
+          data_type: string
+          data_tests:
+            - not_null
+
+        - name: votes_received
+          description: Total de votos obtenidos
+          data_type: integer
+
+        - name: election_year
+          description: Año de la elección
+          data_type: integer
+          data_tests:
+            - not_null
+
+
+    - name: bronze_campaign_transactions
+      description: Transacciones financieras de campañas electorales
+      columns:
+        - name: txn_id
+          description: Identificador de la transacción
+          data_type: string
+          data_tests:
+            - not_null
+            - unique
+
+        - name: candidate_id
+          description: Candidato asociado
+          data_type: string
+          data_tests:
+            - not_null
+
+        - name: vendor_payee
+          description: Proveedor pagado
+          data_type: string
+
+        - name: transaction_type
+          description: Tipo de transacción
+          data_type: string
+
+        - name: amount
+          description: Total de la transacción
+          data_type: number
+          data_tests:
+            - not_null
+
+        - name: transaction_date
+          description: Fecha de la transacción
+          data_type: date
+
+
+    - name: bronze_financial_reports
+      description: Reportes financieros agregados por campaña
+      columns:
+        - name: report_id
+          description: Identificador del reporte
+          data_type: string
+          data_tests:
+            - not_null
+            - unique
+
+        - name: campaign_id
+          description: Campaña asociada
+          data_type: string
+          data_tests:
+            - not_null
+
+        - name: total_raised
+          description: Total recaudado
+          data_type: number
+
+        - name: total_spent
+          description: Total gastado
+          data_type: number
+
+        - name: report_date
+          description: Fecha del reporte
+          data_type: date
