@@ -6,3 +6,6 @@ SELECT
     total_votes_state
 FROM {{ source('raw_data', 'raw_data_election_results') }}
 WHERE votes > total_votes_state
+
+
+--Verifica que los votos no sean superiores al total de votos de un estado

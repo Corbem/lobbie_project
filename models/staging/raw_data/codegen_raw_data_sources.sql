@@ -3,12 +3,10 @@
         schema_name = 'RAW_DATA',
         database_name = 'ELECTION_DATA',
         table_names = [
-            'RAW_DATA_CAMPAIGN_TRANSACTIONS', 
-            'RAW_DATA_CANDIDATE_INFO', 
-            'RAW_DATA_ELECTION_RESULTS', 
-            'RAW_DATA_FEC_CONTRIBUTIONS', 
-            'RAW_DATA_FINANCIAL_REPORTS', 
-            'RAW_DATA_LOBBYING_EXPENSES'
+        'stg_raw_data_donors',
+        'stg_raw_data_industries',
+        'stg_raw_data_lobbies',
+        'stg_vendors'
         ],
         generate_columns = True,
         include_descriptions=True,

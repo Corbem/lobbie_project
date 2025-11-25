@@ -236,3 +236,41 @@ sources:
             data_type: number
             description: "Número de reportes presentados"
           - name: purpose
+      - name: stg_raw_data_donors
+        description: ""
+        columns:
+          - name: donor_name
+            data_type: varchar
+            description: ""
+          - name: donor_occupation
+            data_type: varchar
+            description: ""
+          - name: donor_employer
+            data_type: varchar
+            description: ""
+      - name: stg_raw_data_industries
+        description: ""
+        columns:
+          - name: donor_industry
+            data_type: varchar
+            description: ""
+
+      - name: stg_raw_data_lobbies
+        description: ""
+        columns:
+          - name: lobby_id
+            data_type: varchar
+            description: ""
+          - name: org_name
+            data_type: varchar
+            description: ""
+          - name: industry
+            data_type: varchar
+            description: ""
+
+      - name: stg_raw_data_vendors
+        description: ""
+        columns:  
+          - name: vendor_payee
+            data_type: varchar
+            description: ""        
