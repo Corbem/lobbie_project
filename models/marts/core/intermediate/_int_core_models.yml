@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: int_candidate_info_attributed
+    description: "Asignación de transacciones a candidatos, modelo intermedio"
+    columns:
+      - name: txn_id
+        description: "ID único de transacción"
+        data_tests:
+          - not_null
+          - unique
+      - name: candidate_id
+        description: "ID de candidato asociado a la transacción"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_candidates')
+              field: candidate_id
+      - name: amount
+        description: "Monto de la transacción"
+      - name: transaction_date
+        description: "Fecha de la transacción"
+
+  - name: int_lobbying_expenses_aggregated
+    description: "Agregación de fondos de lobbies por candidato"
+    columns:
+      - name: lobby_id
+        description: "ID del lobby"
+        data_tests:
+          - not_null
+      - name: candidate_id
+        description: "ID de candidato asociado"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_candidates')
+              field: candidate_id
+      - name: total_lobby_funding
+        description: "Monto total aportado por el lobby"
+
+  - name: int_candidate_campaign_transactions_influence_evaluated
+    description: "Evaluación de influencia de candidatos según transacciones recibidas"
+    columns:
+      - name: candidate_id
+        description: "ID de candidato"
+        data_tests:
+          - not_null
+      - name: total_received
+        description: "Suma de fondos recibidos"
+      - name: txn_count
+        description: "Número de transacciones recibidas"
+      - name: avg_txn_value
+        description: "Valor promedio de transacción"

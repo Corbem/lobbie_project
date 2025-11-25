@@ -1,0 +1,238 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database: ELECTION_DATA
+    schema: raw_data
+    description: Datos en crudo provenientes de sistemas externos simulando OpenSecrets y FEC
+    loader: manual_csv_ingestion
+
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    freshness:
+      warn_after: {count: 24, period: hour}
+      error_after: {count: 48, period: hour}
+
+    tables:
+
+      - name: raw_data_campaign_transactions
+        description: "Transacciones financieras relacionadas con campañas electorales (pagos, gastos, servicios y operativa general)"
+        columns:
+          - name: txn_id
+            data_type: varchar
+            description: "Identificador único de la transacción"
+            data_tests:
+              - not_null
+              - unique
+          - name: candidate_id
+            data_type: varchar
+            description: "Identificador del candidato asociado a la transacción"
+            data_tests:
+              - not_null
+          - name: transaction_type
+            data_type: varchar
+            description: "Tipo de transacción realizada (expense, refund, payment)"
+          - name: vendor_payee
+            data_type: varchar
+            description: "Proveedor o beneficiario del pago"
+          - name: amount
+            data_type: number
+            description: "Importe monetario de la transacción"
+            data_tests:
+              - not_null
+          - name: transaction_date
+            data_type: date
+            description: "Fecha en la que se realizó la transacción"
+          - name: description
+            data_type: varchar
+            description: "Descripción libre de la transacción"
+          - name: election_year
+            data_type: number
+            description: "Año electoral asociado a la transacción"
+
+      - name: raw_data_candidate_info
+        description: "Información maestra de candidatos electorales"
+        columns:
+          - name: candidate_id
+            data_type: varchar
+            description: "Identificador único del candidato"
+            data_tests:
+              - not_null
+              - unique
+          - name: first_name
+            data_type: varchar
+            description: "Nombre del candidato"
+          - name: last_name
+            data_type: varchar
+            description: "Apellido del candidato"
+          - name: full_name
+            data_type: varchar
+            description: "Nombre completo del candidato"
+          - name: party
+            data_type: varchar
+            description: "Partido político del candidato"
+          - name: state
+            data_type: varchar
+            description: "Estado al que representa"
+          - name: office
+            data_type: varchar
+            description: "Cargo político al que opta"
+          - name: district
+            data_type: number
+            description: "Distrito electoral"
+          - name: incumbent
+            data_type: boolean
+            description: "Indica si el candidato es incumbente"
+          - name: campaign_start_date
+            data_type: date
+            description: "Fecha de inicio de campaña"
+          - name: candidate_website
+            data_type: varchar
+            description: "Página web oficial del candidato"
+
+      - name: raw_data_election_results
+        description: "Resultados oficiales de elecciones por candidato y estado"
+        columns:
+          - name: result_id
+            data_type: varchar
+            description: "Identificador único del resultado"
+            data_tests:
+              - not_null
+              - unique
+          - name: election_year
+            data_type: number
+            description: "Año de la elección"
+            data_tests:
+              - not_null
+          - name: state
+            data_type: varchar
+            description: "Estado donde se celebró la elección"
+          - name: candidate_id
+            data_type: varchar
+            description: "Candidato asociado al resultado"
+            data_tests:
+              - not_null
+          - name: office
+            data_type: varchar
+            description: "Cargo político"
+          - name: votes
+            data_type: number
+            description: "Número de votos obtenidos"
+          - name: total_votes_state
+            data_type: number
+            description: "Total de votos emitidos en el estado"
+          - name: vote_share
+            data_type: float
+            description: "Porcentaje de votos obtenidos sobre el total"
+
+      - name: raw_data_fec_contributions
+        description: "Datos de contribuciones individuales reportadas a la FEC"
+        columns:
+          - name: contribution_id
+            data_type: varchar
+            description: "ID único de la contribución"
+            data_tests:
+              - not_null
+              - unique
+          - name: donor_name
+            data_type: varchar
+            description: "Nombre del donante"
+          - name: donor_occupation
+            data_type: varchar
+            description: "Ocupación del donante"
+          - name: donor_employer
+            data_type: varchar
+            description: "Empleador del donante"
+          - name: donor_industry
+            data_type: varchar
+            description: "Industria del donante"
+          - name: recipient_candidate_id
+            data_type: varchar
+            description: "Candidato receptor"
+            data_tests:
+              - not_null
+          - name: recipient_committee
+            data_type: varchar
+            description: "Comité receptor"
+          - name: amount
+            data_type: number
+            description: "Importe donado"
+            data_tests:
+              - not_null
+          - name: transaction_date
+            data_type: date
+            description: "Fecha de la donación"
+          - name: transaction_type
+            data_type: varchar
+            description: "Tipo de transacción (individual, PAC, etc)"
+          - name: election_year
+            data_type: number
+            description: "Año electoral"
+          - name: state
+            data_type: varchar
+            description: "Estado del donante"
+
+      - name: raw_data_financial_reports
+        description: "Informes financieros oficiales de campañas electorales"
+        columns:
+          - name: report_id
+            data_type: varchar
+            description: "Identificador único del reporte"
+            data_tests:
+              - not_null
+              - unique
+          - name: candidate_id
+            data_type: varchar
+            description: "Candidato asociado al informe"
+            data_tests:
+              - not_null
+          - name: cycle
+            data_type: number
+            description: "Ciclo electoral"
+          - name: total_receipts
+            data_type: number
+            description: "Total de ingresos declarados"
+          - name: total_disbursements
+            data_type: number
+            description: "Total de gastos declarados"
+          - name: cash_on_hand
+            data_type: number
+            description: "Efectivo disponible"
+          - name: filing_date
+            data_type: date
+            description: "Fecha de presentación"
+          - name: report_type
+            data_type: varchar
+            description: "Tipo de reporte"
+
+      - name: raw_data_lobbying_expenses
+        description: "Gastos de lobby por organizaciones e industrias"
+        columns:
+          - name: lobby_id
+            data_type: varchar
+            description: "Identificador del lobby"
+            data_tests:
+              - not_null
+              - unique
+          - name: org_name
+            data_type: varchar
+            description: "Organización que ejerce lobby"
+          - name: client_name
+            data_type: varchar
+            description: "Cliente representado"
+          - name: industry
+            data_type: varchar
+            description: "Industria asociada"
+          - name: report_year
+            data_type: number
+            description: "Año del reporte"
+          - name: total_spent
+            data_type: number
+            description: "Total gastado en lobby"
+          - name: num_filings
+            data_type: number
+            description: "Número de reportes presentados"
+          - name: purpose

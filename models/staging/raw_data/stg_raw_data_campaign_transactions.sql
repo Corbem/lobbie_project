@@ -6,7 +6,7 @@
 
 WITH src_campaign_transactions AS (
     SELECT * 
-    FROM {{ source('bronze', 'bronze_campaign_transactions') }}
+    FROM {{ source('raw_data', 'raw_data_campaign_transactions') }}
     ),
 
 renamed_casted AS (

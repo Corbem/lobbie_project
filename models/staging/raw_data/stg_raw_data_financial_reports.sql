@@ -6,7 +6,7 @@
 
 WITH src_reports AS (
     SELECT *
-    FROM {{ source('bronze', 'bronze_financial_reports') }}
+    FROM {{ source('raw_data', 'raw_data_financial_reports') }}
 ),
 
 renamed_casted AS (
