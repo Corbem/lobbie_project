@@ -5,4 +5,7 @@ packages:
   - name: codegen
     package: dbt-labs/codegen
     version: 0.13.1
-sha1_hash: 622fcbe91f7df2d9329fdcf3ed5cd70eca0271b0
+  - name: dbt_project_evaluator
+    package: dbt-labs/dbt_project_evaluator
+    version: 1.1.2
+sha1_hash: 2344e43576d395910748a3d9f5042e1422a6b5d4

@@ -1,0 +1,146 @@
+version: 2
+
+models:
+
+  - name: dim_candidate
+    description: Dimensión de candidatos electorales
+    columns:
+      - name: candidate_id
+        description: Identificador único del candidato
+        data_tests:
+          - not_null
+          - unique
+      - name: full_name
+        description: Nombre completo del candidato
+        data_tests:
+          - not_null
+      - name: party
+        description: Partido político
+        data_tests:
+          - not_null
+
+  - name: dim_donor
+    description: Dimensión de donantes individuales u organizaciones
+    columns:
+      - name: donor_id
+        description: Identificador único del donante
+        data_tests:
+          - not_null
+          - unique
+      - name: donor_name
+        description: Nombre del donante
+        data_tests:
+          - not_null
+
+  - name: dim_vendor
+    description: Dimensión de proveedores de campañas
+    columns:
+      - name: vendor_id
+        data_tests:
+          - not_null
+          - unique
+      - name: vendor_name
+        data_tests:
+          - not_null
+
+  - name: dim_lobby
+    description: Dimensión de lobbies y organizaciones de influencia
+    columns:
+      - name: lobby_id
+        data_tests:
+          - not_null
+          - unique
+      - name: lobby_name
+        data_tests:
+          - not_null
+
+  - name: dim_industry
+    description: Dimensión de industrias asociadas a donantes y lobbies
+    columns:
+      - name: industry_id
+        data_tests:
+          - not_null
+          - unique
+      - name: industry_name
+        data_tests:
+          - not_null
+
+  - name: dim_time
+    description: Dimensión temporal usada para análisis por fecha
+    columns:
+      - name: date
+        data_tests:
+          - not_null
+          - unique
+
+  - name: fct_contributions
+    description: Hecho incremental de aportaciones económicas a candidatos
+    columns:
+      - name: contribution_id
+        data_tests:
+          - not_null
+          - unique
+      - name: donor_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_donor')
+              field: donor_id
+      - name: candidate_id
+        data_tests:
+          - relationships:
+              to: ref('dim_candidate')
+              field: candidate_id
+      - name: amount
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: fct_campaign_transactions
+    description: Hecho incremental de transacciones operativas de campaña
+    columns:
+      - name: txn_id
+        data_tests:
+          - not_null
+          - unique
+      - name: candidate_id
+        data_tests:
+          - relationships:
+              to: ref('dim_candidate')
+              field: candidate_id
+      - name: vendor_id
+        data_tests:
+          - relationships:
+              to: ref('dim_vendor')
+              field: vendor_id
+      - name: amount
+        data_tests:
+          - not_null
+
+  - name: fct_lobby_spend
+    description: Hecho agregado de gasto en actividades de lobby
+    columns:
+      - name: lobby_id
+        data_tests:
+          - relationships:
+              to: ref('dim_lobby')
+              field: lobby_id
+
+  - name: fct_election_results
+    description: Resultados electorales oficiales por candidato
+    columns:
+      - name: result_id
+        data_tests:
+          - not_null
+          - unique
+      - name: candidate_id
+        data_tests:
+          - relationships:
+              to: ref('dim_candidate')
+              field: candidate_id
+      - name: vote_share
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1

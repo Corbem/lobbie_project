@@ -32,6 +32,9 @@ sources:
             description: "Identificador del candidato asociado a la transacción"
             data_tests:
               - not_null
+              - relationships:
+                to: ref('stg_raw_data_candidate_info')
+                field: candidate_id
           - name: transaction_type
             data_type: varchar
             description: "Tipo de transacción realizada (expense, refund, payment)"
@@ -115,6 +118,9 @@ sources:
             description: "Candidato asociado al resultado"
             data_tests:
               - not_null
+              - relationships:
+                to: ref('stg_raw_data_candidate_info')
+                field: candidate_id
           - name: office
             data_type: varchar
             description: "Cargo político"
@@ -140,6 +146,10 @@ sources:
           - name: donor_name
             data_type: varchar
             description: "Nombre del donante"
+            data_tests:
+              - relationships:
+                to: ref('stg_raw_data_donors')
+                field: donor_name
           - name: donor_occupation
             data_type: varchar
             description: "Ocupación del donante"
@@ -149,11 +159,18 @@ sources:
           - name: donor_industry
             data_type: varchar
             description: "Industria del donante"
+            data_tests:
+              - relationships:
+                to: ref('stg_raw_data_lobbying_expenses')
+                field: industry
           - name: recipient_candidate_id
             data_type: varchar
             description: "Candidato receptor"
             data_tests:
               - not_null
+              - relationships:
+                to: ref('raw_data_candidate_info')
+                field: candidate_id
           - name: recipient_committee
             data_type: varchar
             description: "Comité receptor"
@@ -189,6 +206,9 @@ sources:
             description: "Candidato asociado al informe"
             data_tests:
               - not_null
+              - relationships:
+                to: ref('stg_raw_data_candidate_info')
+                field: candidate_id
           - name: cycle
             data_type: number
             description: "Ciclo electoral"
@@ -217,6 +237,9 @@ sources:
             data_tests:
               - not_null
               - unique
+              - relationships:
+                to: ref('stg_raw_data_lobbies')
+                field: lobby_id
           - name: org_name
             data_type: varchar
             description: "Organización que ejerce lobby"
@@ -226,6 +249,10 @@ sources:
           - name: industry
             data_type: varchar
             description: "Industria asociada"
+            data_tests:
+              - relationships:
+                to: ref('stg_raw_data_fec_contributions')
+                field: donor_industry
           - name: report_year
             data_type: number
             description: "Año del reporte"
@@ -242,6 +269,10 @@ sources:
           - name: donor_name
             data_type: varchar
             description: ""
+            data_tests:
+              - relationships:
+                to: ref('stg_raw_data_fec_contributions')
+                field: donor_name
           - name: donor_occupation
             data_type: varchar
             description: ""
