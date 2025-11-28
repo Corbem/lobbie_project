@@ -34,6 +34,7 @@ mapped AS (
     s.transaction_type,
     s.election_year,
     s.state,
+    s.donor_industry,
     i.donor_industry
   FROM src s
   LEFT JOIN {{ ref('stg_raw_data_donors') }} d
@@ -41,7 +42,7 @@ mapped AS (
    AND (d.donor_employer IS NULL OR INITCAP(s.donor_employer) = INITCAP(d.donor_employer))
   LEFT JOIN {{ ref('stg_raw_data_industries') }} ind
     ON UPPER(s.donor_industry) = ind.industry_name
-  LEFT JOIN {{ ref('stg_raw_data_fec_contributions') }} i ON ind.industry_name = i.donor_industry -- placeholder if you maintain mapping table
+  LEFT JOIN {{ ref('stg_raw_data_fec_contributions') }} i ON ind.industry_name = i.donor_industry 
 )
 
 SELECT * FROM mapped

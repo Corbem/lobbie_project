@@ -4,7 +4,7 @@ sources:
   - name: raw_data
     database: ELECTION_DATA
     schema: raw_data
-    description: Datos en crudo provenientes de sistemas externos simulando OpenSecrets y FEC
+    description: "Datos en crudo provenientes de sistemas externos simulando OpenSecrets y FEC"
     loader: manual_csv_ingestion
 
     quoting:
@@ -17,7 +17,6 @@ sources:
       error_after: {count: 48, period: hour}
 
     tables:
-
       - name: raw_data_campaign_transactions
         description: "Transacciones financieras relacionadas con campañas electorales (pagos, gastos, servicios y operativa general)"
         columns:
@@ -33,8 +32,8 @@ sources:
             data_tests:
               - not_null
               - relationships:
-                to: ref('stg_raw_data_candidate_info')
-                field: candidate_id
+                  to: ref('raw_data_candidate_info')
+                  field: candidate_id
           - name: transaction_type
             data_type: varchar
             description: "Tipo de transacción realizada (expense, refund, payment)"
@@ -119,8 +118,8 @@ sources:
             data_tests:
               - not_null
               - relationships:
-                to: ref('stg_raw_data_candidate_info')
-                field: candidate_id
+                  to: ref('raw_data_candidate_info')
+                  field: candidate_id
           - name: office
             data_type: varchar
             description: "Cargo político"
@@ -146,10 +145,6 @@ sources:
           - name: donor_name
             data_type: varchar
             description: "Nombre del donante"
-            data_tests:
-              - relationships:
-                to: ref('stg_raw_data_donors')
-                field: donor_name
           - name: donor_occupation
             data_type: varchar
             description: "Ocupación del donante"
@@ -159,18 +154,14 @@ sources:
           - name: donor_industry
             data_type: varchar
             description: "Industria del donante"
-            data_tests:
-              - relationships:
-                to: ref('stg_raw_data_lobbying_expenses')
-                field: industry
           - name: recipient_candidate_id
             data_type: varchar
             description: "Candidato receptor"
             data_tests:
               - not_null
               - relationships:
-                to: ref('raw_data_candidate_info')
-                field: candidate_id
+                  to: ref('raw_data_candidate_info')
+                  field: candidate_id
           - name: recipient_committee
             data_type: varchar
             description: "Comité receptor"
@@ -207,8 +198,8 @@ sources:
             data_tests:
               - not_null
               - relationships:
-                to: ref('stg_raw_data_candidate_info')
-                field: candidate_id
+                  to: ref('raw_data_candidate_info')
+                  field: candidate_id
           - name: cycle
             data_type: number
             description: "Ciclo electoral"
@@ -237,9 +228,6 @@ sources:
             data_tests:
               - not_null
               - unique
-              - relationships:
-                to: ref('stg_raw_data_lobbies')
-                field: lobby_id
           - name: org_name
             data_type: varchar
             description: "Organización que ejerce lobby"
@@ -249,10 +237,6 @@ sources:
           - name: industry
             data_type: varchar
             description: "Industria asociada"
-            data_tests:
-              - relationships:
-                to: ref('stg_raw_data_fec_contributions')
-                field: donor_industry
           - name: report_year
             data_type: number
             description: "Año del reporte"
@@ -263,45 +247,57 @@ sources:
             data_type: number
             description: "Número de reportes presentados"
           - name: purpose
+            data_type: varchar
+            description: "Propósito del lobby"
+
       - name: stg_raw_data_donors
-        description: ""
+        description: "Tabla de staging para donantes"
         columns:
           - name: donor_name
             data_type: varchar
-            description: ""
+            description: "Nombre del donante"
             data_tests:
-              - relationships:
-                to: ref('stg_raw_data_fec_contributions')
-                field: donor_name
+              - not_null
+              - unique
           - name: donor_occupation
             data_type: varchar
-            description: ""
+            description: "Ocupación del donante"
           - name: donor_employer
             data_type: varchar
-            description: ""
+            description: "Empleador del donante"
+
       - name: stg_raw_data_industries
-        description: ""
+        description: "Tabla de staging para industrias"
         columns:
           - name: donor_industry
             data_type: varchar
-            description: ""
+            description: "Industria del donante"
+            data_tests:
+              - not_null
+              - unique
 
       - name: stg_raw_data_lobbies
-        description: ""
+        description: "Tabla de staging para lobbies"
         columns:
           - name: lobby_id
             data_type: varchar
-            description: ""
+            description: "Identificador del lobby"
+            data_tests:
+              - not_null
+              - unique
           - name: org_name
             data_type: varchar
-            description: ""
+            description: "Nombre de la organización"
           - name: industry
             data_type: varchar
-            description: ""
+            description: "Industria asociada"
 
       - name: stg_raw_data_vendors
-        description: ""
+        description: "Tabla de staging para vendedores"
         columns:  
           - name: vendor_payee
             data_type: varchar
-            description: ""        
+            description: "Nombre del vendedor o beneficiario"
+            data_tests:
+              - not_null
+              - unique

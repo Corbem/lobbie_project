@@ -2,13 +2,15 @@
     materialized='table',
     schema='gold'
 ) }}
+
 -- ¿Qué candidatos reciben más apoyo de ciertos grupos de interés?
 
 WITH contribs AS (
     SELECT
         c.candidate_id,
         COALESCE(d.donor_name, 'UNKNOWN') AS donor_industry,
-        COALESCE(l.lobby_id, 'NO_LOBBY') AS lobby_id,
+        COALESCE(l.lobby_name, 'NO_LOBBY') AS lobby_name,
+        COALESCE(l.industry_name, 'NO_INDUSTRY') AS industry_name,
         SUM(c.amount) AS total_by_group
     FROM {{ ref('fct_contributions') }} c
     LEFT JOIN {{ ref('stg_raw_data_donors') }} d 
@@ -18,13 +20,15 @@ WITH contribs AS (
     GROUP BY 
         c.candidate_id,
         d.donor_name,
-        l.lobby_id
+        l.lobby_name,
+        l.industry_name
 )
 
 SELECT
     candidate_id,
     donor_industry,
-    lobby_id,
+    lobby_name,
+    industry_name,
     total_by_group,
     RANK() OVER (
         PARTITION BY candidate_id 
